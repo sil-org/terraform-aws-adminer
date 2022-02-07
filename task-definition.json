@@ -1,0 +1,19 @@
+[
+  {
+    "cpu": ${cpu},
+    "memory": ${memory},
+    "image": "adminer:latest",
+    "name": "adminer",
+    "portMappings": [
+      {
+        "containerPort": 8080
+      }
+    ],
+    "environment": [
+      {
+        "name": "ADMINER_DEFAULT_SERVER",
+        "value": "${adminer_default_server}"
+      }
+    ]
+  }
+]
