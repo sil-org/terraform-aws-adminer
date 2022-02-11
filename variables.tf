@@ -7,12 +7,12 @@ variable "adminer_default_server" {
 }
 
 variable "adminer_design" {
-  description = "adminer UI design name"
+  description = "specify Adminer theme, see https://adminer.org/en#extras for options"
   default     = ""
 }
 
 variable "adminer_plugins" {
-  description = "adminer plugins to install"
+  description = "add Adminer plugins, see https://hub.docker.com/_/adminer/ for details"
   default     = ""
 }
 
