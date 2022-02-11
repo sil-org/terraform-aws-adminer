@@ -13,6 +13,14 @@
       {
         "name": "ADMINER_DEFAULT_SERVER",
         "value": "${ADMINER_DEFAULT_SERVER}"
+      },
+      {
+        "name": "ADMINER_DESIGN",
+        "value": "${ADMINER_DESIGN}"
+      },
+      {
+        "name": "ADMINER_PLUGINS",
+        "value": "${ADMINER_PLUGINS}"
       }
     ]
   }

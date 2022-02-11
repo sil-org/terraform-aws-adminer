@@ -6,6 +6,16 @@ variable "adminer_default_server" {
   default     = "db"
 }
 
+variable "adminer_design" {
+  description = "adminer UI design name"
+  default     = ""
+}
+
+variable "adminer_plugins" {
+  description = "adminer plugins to install"
+  default     = ""
+}
+
 variable "app_name" {
   type        = string
   default     = "adminer"

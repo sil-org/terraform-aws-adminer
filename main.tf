@@ -48,6 +48,8 @@ locals {
   task_def = templatefile("${path.module}/task-definition.json",
     {
       ADMINER_DEFAULT_SERVER = var.adminer_default_server
+      ADMINER_DESIGN         = var.adminer_design
+      ADMINER_PLUGINS        = var.adminer_plugins
       cpu                    = var.cpu
       memory                 = var.memory
     }
