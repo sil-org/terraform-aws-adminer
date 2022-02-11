@@ -52,11 +52,6 @@ variable "cloudflare_domain" {
   description = "domain name registered with Cloudflare"
 }
 
-variable "rds_address" {
-  type        = string
-  description = "address of the RDS server"
-}
-
 variable "ecs_cluster_id" {
   type        = string
   description = "cluster ID for the ECS service"
