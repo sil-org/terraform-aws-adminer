@@ -1,6 +1,21 @@
 /*
  * Application settings
  */
+variable "adminer_default_server" {
+  description = "URL of default database server"
+  default     = "db"
+}
+
+variable "adminer_design" {
+  description = "adminer UI design name"
+  default     = ""
+}
+
+variable "adminer_plugins" {
+  description = "adminer plugins to install"
+  default     = ""
+}
+
 variable "app_name" {
   type        = string
   default     = "adminer"
@@ -35,11 +50,6 @@ variable "subdomain" {
 variable "cloudflare_domain" {
   type        = string
   description = "domain name registered with Cloudflare"
-}
-
-variable "rds_address" {
-  type        = string
-  description = "address of the RDS server"
 }
 
 variable "ecs_cluster_id" {

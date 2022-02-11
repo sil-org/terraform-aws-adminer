@@ -1,12 +1,12 @@
 module "adminer" {
   source                 = "../"
+  adminer_default_server = module.rds.address
   app_name               = var.app_name
   app_env                = var.app_env
   vpc_id                 = module.vpc.id
   alb_https_listener_arn = module.alb.https_listener_arn
   subdomain              = "adminer"
   cloudflare_domain      = var.dns_domain
-  rds_address            = module.rds.address
   ecs_cluster_id         = module.ecscluster.ecs_cluster_id
   ecsServiceRole_arn     = module.ecscluster.ecsServiceRole_arn
   alb_dns_name           = module.alb.dns_name
