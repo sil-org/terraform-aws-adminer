@@ -1,6 +1,11 @@
 /*
  * Application settings
  */
+variable "adminer_default_server" {
+  description = "URL of default database server"
+  default     = "db"
+}
+
 variable "app_name" {
   type        = string
   default     = "adminer"

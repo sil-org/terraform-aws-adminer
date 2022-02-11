@@ -12,7 +12,7 @@
     "environment": [
       {
         "name": "ADMINER_DEFAULT_SERVER",
-        "value": "${adminer_default_server}"
+        "value": "${ADMINER_DEFAULT_SERVER}"
       }
     ]
   }

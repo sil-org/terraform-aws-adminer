@@ -47,7 +47,7 @@ resource "aws_alb_listener_rule" "adminer" {
 locals {
   task_def = templatefile("${path.module}/task-definition.json",
     {
-      adminer_default_server = "${var.subdomain}.${var.cloudflare_domain}"
+      ADMINER_DEFAULT_SERVER = var.adminer_default_server
       cpu                    = var.cpu
       memory                 = var.memory
     }
