@@ -76,7 +76,7 @@ resource "cloudflare_record" "adminerdns" {
   count   = var.enable ? 1 : 0
   zone_id = data.cloudflare_zones.domain.zones[0].id
   name    = var.subdomain
-  value   = var.alb_dns_name
+  content = var.alb_dns_name
   type    = "CNAME"
   proxied = true
 }
