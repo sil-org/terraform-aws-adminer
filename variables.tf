@@ -49,7 +49,7 @@ variable "subdomain" {
 
 variable "cloudflare_domain" {
   type        = string
-  description = "domain name registered with Cloudflare"
+  description = "domain name hosted with Cloudflare"
 }
 
 variable "ecs_cluster_id" {
