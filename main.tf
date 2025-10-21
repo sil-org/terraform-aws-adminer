@@ -57,7 +57,7 @@ locals {
 }
 
 module "ecsservice" {
-  source             = "github.com/silinternational/terraform-modules//aws/ecs/service-only?ref=8.13.0"
+  source             = "github.com/sil-org/terraform-modules//aws/ecs/service-only?ref=8.13.0"
   cluster_id         = var.ecs_cluster_id
   service_name       = "adminer-${var.app_name}"
   service_env        = var.app_env
