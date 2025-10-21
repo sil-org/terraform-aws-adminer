@@ -46,8 +46,8 @@ provider "cloudflare" {
 
 ## Example
 
-A working [example](https://github.com/silinternational/terraform-aws-adminer/tree/main/example) usage of this module is included in the source repository.
+A working [example](https://github.com/sil-org/terraform-aws-adminer/tree/main/example) usage of this module is included in the source repository.
 
 ## More info
 
-More information is available at the [Terraform Registry](https://registry.terraform.io/modules/silinternational/adminer/aws/latest)
+More information is available at the [Terraform Registry](https://registry.terraform.io/modules/sil-org/adminer/aws/latest)
