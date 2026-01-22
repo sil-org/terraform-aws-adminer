@@ -61,16 +61,21 @@ locals {
 }
 
 module "ecsservice" {
-  source             = "github.com/sil-org/terraform-modules//aws/ecs/service-only?ref=8.13.0"
+  source  = "sil-org/ecs-service/aws"
+  version = "~> 0.3.0"
+
   cluster_id         = var.ecs_cluster_id
   service_name       = "adminer-${var.app_name}"
   service_env        = var.app_env
   container_def_json = local.task_def
   desired_count      = var.enable ? 1 : 0
-  tg_arn             = aws_alb_target_group.adminer.arn
-  lb_container_name  = "adminer"
-  lb_container_port  = "8080"
   ecsServiceRole_arn = var.ecsServiceRole_arn
+
+  load_balancer = [{
+    target_group_arn = aws_alb_target_group.adminer.arn
+    container_name   = "adminer"
+    container_port   = "8080"
+  }]
 }
 
 /*
