@@ -1,6 +1,6 @@
 module "adminer" {
   source                 = "../"
-  adminer_default_server = module.rds.address
+  adminer_default_server = aws_db_instance.address
   app_name               = var.app_name
   app_env                = var.app_env
   vpc_id                 = module.vpc.id
@@ -16,7 +16,9 @@ module "adminer" {
  * Create ECS cluster
  */
 module "ecscluster" {
-  source   = "github.com/sil-org/terraform-modules//aws/ecs/cluster?ref=3.3.2"
+  source  = "sil-org/ecs-cluster/aws"
+  version = "~> 0.1.0"
+
   app_name = var.app_name
   app_env  = var.app_env
 }
@@ -25,7 +27,9 @@ module "ecscluster" {
  * Create VPC
  */
 module "vpc" {
-  source    = "github.com/sil-org/terraform-modules//aws/vpc?ref=3.3.2"
+  source  = "sil-org/vpc/aws"
+  version = "~> 1.0"
+
   app_name  = var.app_name
   app_env   = var.app_env
   aws_zones = [var.aws_region]
@@ -35,22 +39,16 @@ module "vpc" {
  * Create application load balancer for public access
  */
 module "alb" {
-  source          = "github.com/sil-org/terraform-modules//aws/alb?ref=3.3.2"
+  source  = "sil-org/alb/aws"
+  version = "~> 1.1"
+
   app_name        = var.app_name
   app_env         = var.app_env
   internal        = "false"
   vpc_id          = module.vpc.id
-  security_groups = [module.vpc.vpc_default_sg_id, module.cloudflare-sg.id]
+  security_groups = [module.vpc.vpc_default_sg_id]
   subnets         = module.vpc.public_subnet_ids
   certificate_arn = data.aws_acm_certificate.wildcard.arn
-}
-
-/*
- * Security group to limit traffic to Cloudflare IPs
- */
-module "cloudflare-sg" {
-  source = "github.com/sil-org/terraform-modules//aws/cloudflare-sg?ref=3.3.2"
-  vpc_id = module.vpc.id
 }
 
 /*
@@ -68,22 +66,15 @@ resource "random_id" "db_root_pass" {
   byte_length = 16
 }
 
-module "rds" {
-  source                  = "github.com/sil-org/terraform-modules//aws/rds/mariadb?ref=3.3.2"
-  app_name                = var.app_name
-  app_env                 = var.app_env
-  db_name                 = "adminer-test-db"
-  db_root_user            = "adminer-test-user"
-  db_root_pass            = random_id.db_root_pass.hex
-  subnet_group_name       = module.vpc.db_subnet_group_name
-  availability_zone       = var.aws_region
-  security_groups         = [module.vpc.vpc_default_sg_id]
+resource "aws_db_instance" "db_instance" {
   engine                  = "postgres"
-  engine_version          = ""
   allocated_storage       = "8"
   instance_class          = "db.t2.micro"
+  username                = "adminer-test-user"
+  password                = random_id.db_root_pass.hex
+  db_subnet_group_name    = module.vpc.db_subnet_group_name
   storage_type            = "gp2"
+  availability_zone       = var.aws_region
   backup_retention_period = 1
-  multi_az                = false
-  skip_final_snapshot     = true
+  vpc_security_group_ids  = [module.vpc.vpc_default_sg_id]
 }
