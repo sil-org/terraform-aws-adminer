@@ -129,7 +129,7 @@ resource "random_bytes" "totp_seed" {
 data "external" "totp_formatter" {
   count = var.require_totp ? 1 : 0
 
-  program = ["node", "${path.module}/totp.js"]
+  program = ["bash", "${path.module}/totp.sh"]
 
   query = {
     secret_base64 = random_bytes.totp_seed[0].base64
