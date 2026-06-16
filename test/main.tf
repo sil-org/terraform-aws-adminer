@@ -28,6 +28,7 @@ module "full" {
   ecs_cluster_id         = "arn:aws:ecs:us-east-1:1234567890:cluster/app-prod"
   enable                 = false
   memory                 = "32"
+  require_totp           = true
   subdomain              = "pma"
   vpc_id                 = "vpc-012345678"
 }
