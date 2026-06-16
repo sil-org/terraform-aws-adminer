@@ -71,7 +71,7 @@ locals {
         },
         {
           "name" : "ADMINER_OTP_SECRET"
-          "value" : var.require_totp ? random_bytes.totp_seed[0].base64 : ""
+          "value" : var.require_totp ? random_bytes.totp_secret[0].base64 : ""
         },
         {
           "name" : "ADMINER_PLUGINS"
@@ -120,18 +120,18 @@ data "cloudflare_zones" "domain" {
   }
 }
 
-resource "random_bytes" "totp_seed" {
+resource "random_bytes" "totp_secret" {
   count = var.require_totp ? 1 : 0
 
   length = 20
 }
 
-data "external" "totp_formatter" {
+data "external" "base64_to_base32" {
   count = var.require_totp ? 1 : 0
 
-  program = ["bash", "${path.module}/totp.sh"]
+  program = ["bash", "${path.module}/base64_to_base32.sh"]
 
   query = {
-    secret_base64 = random_bytes.totp_seed[0].base64
+    input = random_bytes.totp_secret[0].base64
   }
 }
