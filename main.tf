@@ -49,15 +49,37 @@ resource "aws_alb_listener_rule" "adminer" {
  * Create ECS service
  */
 locals {
-  task_def = templatefile("${path.module}/task-definition.json",
+  task_def = jsonencode([
     {
-      ADMINER_DEFAULT_SERVER = var.adminer_default_server
-      ADMINER_DESIGN         = var.adminer_design
-      ADMINER_PLUGINS        = var.adminer_plugins
-      cpu                    = var.cpu
-      memory                 = var.memory
+      cpu : var.cpu
+      memory : var.memory
+      image : var.require_totp ? "ghcr.io/sil-org/terraform-aws-adminer:latest" : "adminer:latest"
+      name : "adminer"
+      portMappings : [
+        {
+          "containerPort" : 8080
+        },
+      ]
+      environment : [
+        {
+          "name" : "ADMINER_DEFAULT_SERVER"
+          "value" : var.adminer_default_server
+        },
+        {
+          "name" : "ADMINER_DESIGN"
+          "value" : var.adminer_design
+        },
+        {
+          "name" : "ADMINER_OTP_SECRET"
+          "value" : var.require_totp ? random_bytes.totp_secret[0].base64 : ""
+        },
+        {
+          "name" : "ADMINER_PLUGINS"
+          "value" : var.adminer_plugins
+        },
+      ]
     }
-  )
+  ])
 }
 
 module "ecsservice" {
@@ -95,5 +117,21 @@ data "cloudflare_zones" "domain" {
     name        = var.cloudflare_domain
     lookup_type = "exact"
     status      = "active"
+  }
+}
+
+resource "random_bytes" "totp_secret" {
+  count = var.require_totp ? 1 : 0
+
+  length = 20
+}
+
+data "external" "base64_to_base32" {
+  count = var.require_totp ? 1 : 0
+
+  program = ["bash", "${path.module}/base64_to_base32.sh"]
+
+  query = {
+    input = random_bytes.totp_secret[0].base64
   }
 }

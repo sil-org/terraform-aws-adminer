@@ -88,3 +88,9 @@ variable "enable" {
   type        = bool
   default     = true
 }
+
+variable "require_totp" {
+  description = "Enable the TOTP plugin for Adminer. This will generate a secret and pass it to the Adminer container."
+  type        = bool
+  default     = false
+}

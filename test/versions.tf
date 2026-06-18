@@ -10,6 +10,10 @@ terraform {
       version = "~> 3.0"
       source  = "cloudflare/cloudflare"
     }
+    external = {
+      source  = "hashicorp/external"
+      version = "~> 2.0"
+    }
     random = {
       version = "~> 3.0"
       source  = "hashicorp/random"
