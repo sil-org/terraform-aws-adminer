@@ -1,6 +1,6 @@
 output "adminer_url" {
   description = "The URL to access Adminer"
-  value       = var.enable ? try(cloudflare_record.adminerdns[0].hostname, "") : "(disabled)"
+  value       = var.enable ? try("https://${var.subdomain}.${var.cloudflare_domain}", "") : "(disabled)"
 }
 
 output "totp_secret" {

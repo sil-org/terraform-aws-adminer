@@ -84,7 +84,7 @@ locals {
 
 module "ecsservice" {
   source  = "sil-org/ecs-service/aws"
-  version = "~> 0.3.0"
+  version = "~> 1.0"
 
   cluster_id         = var.ecs_cluster_id
   service_name       = "adminer-${var.app_name}"
@@ -100,23 +100,25 @@ module "ecsservice" {
   }]
 }
 
-/*
- * Create Cloudflare DNS record
-*/
-resource "cloudflare_record" "adminerdns" {
+# Create Cloudflare DNS record
+resource "cloudflare_dns_record" "adminerdns" {
   count   = var.enable ? 1 : 0
-  zone_id = data.cloudflare_zones.domain.zones[0].id
+  zone_id = data.cloudflare_zone.domain.id
   name    = var.subdomain
-  value   = var.alb_dns_name
+  content = var.alb_dns_name
   type    = "CNAME"
   proxied = true
+  ttl     = 1
 }
 
-data "cloudflare_zones" "domain" {
-  filter {
-    name        = var.cloudflare_domain
-    lookup_type = "exact"
-    status      = "active"
+moved {
+  from = cloudflare_record.adminerdns
+  to   = cloudflare_dns_record.adminerdns
+}
+
+data "cloudflare_zone" "domain" {
+  filter = {
+    name = var.cloudflare_domain
   }
 }
 

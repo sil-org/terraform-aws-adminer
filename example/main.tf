@@ -1,6 +1,6 @@
 module "adminer" {
   source                 = "../"
-  adminer_default_server = aws_db_instance.address
+  adminer_default_server = aws_db_instance.db_instance.address
   app_name               = var.app_name
   app_env                = var.app_env
   vpc_id                 = module.vpc.id
@@ -17,7 +17,7 @@ module "adminer" {
  */
 module "ecscluster" {
   source  = "sil-org/ecs-cluster/aws"
-  version = "~> 0.1.0"
+  version = "~> 1.0"
 
   app_name = var.app_name
   app_env  = var.app_env
@@ -28,7 +28,7 @@ module "ecscluster" {
  */
 module "vpc" {
   source  = "sil-org/vpc/aws"
-  version = "~> 1.0"
+  version = "~> 1.1"
 
   app_name  = var.app_name
   app_env   = var.app_env
@@ -40,7 +40,7 @@ module "vpc" {
  */
 module "alb" {
   source  = "sil-org/alb/aws"
-  version = "~> 1.1"
+  version = "~> 2.0"
 
   app_name        = var.app_name
   app_env         = var.app_env
