@@ -20,6 +20,7 @@ module "full" {
   adminer_default_server = "app-prod.abcdefghijkl.us-east-1.rds.amazonaws.com"
   adminer_design         = "hever"
   adminer_plugins        = "login-otp"
+  adminer_ssl_config     = "{\"verify\":true}"
   app_env                = "prod"
   app_name               = "app"
   cloudflare_domain      = "example.com"

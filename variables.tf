@@ -19,6 +19,16 @@ variable "adminer_plugins" {
   default     = ""
 }
 
+variable "adminer_ssl_config" {
+  description = <<-EOT
+    JSON-encoded configuration for the Adminer SSL plugin. MySQL example: "{\"verify\":true}". See
+    https://www.adminer.org/en/plugins/ for details. The SSL plugin is disabled if this variable 
+    is empty.
+  EOT
+  type        = string
+  default     = ""
+}
+
 variable "app_name" {
   description = "app name, used in load balancer target group name and ecs service name"
   type        = string
