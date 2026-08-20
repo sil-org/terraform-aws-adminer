@@ -11,4 +11,9 @@ if (empty($config)) {
   return new stdClass();  
 }
 
-return new AdminerLoginSsl(json_decode($config, true));
+$decoded = json_decode($config, true);
+if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+  throw new \InvalidArgumentException('Environment variable ADMINER_SSL_CONFIG must be valid JSON: ' . json_last_error_msg());
+}
+
+return new AdminerLoginSsl($decoded);

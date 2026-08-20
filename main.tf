@@ -53,7 +53,10 @@ locals {
     {
       cpu : var.cpu
       memory : var.memory
-      image : "ghcr.io/sil-org/terraform-aws-adminer:latest"
+      image : (var.require_totp || var.adminer_ssl_config != "" ?
+        "ghcr.io/sil-org/terraform-aws-adminer:latest" :
+        "adminer:latest"
+      )
       name : "adminer"
       portMappings : [
         {
