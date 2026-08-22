@@ -45,11 +45,23 @@ resource "aws_alb_listener_rule" "adminer" {
   }
 }
 
+data "aws_region" "current" {}
+
 /*
  * Create ECS service
  */
 locals {
+  log_configuration = var.cloudwatch_log_group_name != "" ? {
+    logDriver : "awslogs"
+    options : {
+      "awslogs-group" : var.cloudwatch_log_group_name
+      "awslogs-region" : data.aws_region.current.name
+      "awslogs-stream-prefix" : "${var.app_name}-${var.app_env}"
+    }
+  } : null
+
   task_def = jsonencode([
+    merge(
     {
       cpu : var.cpu
       memory : var.memory
@@ -85,7 +97,9 @@ locals {
           "value" : var.adminer_ssl_config
         },
       ]
-    }
+      },
+      local.log_configuration != null ? { logConfiguration : local.log_configuration } : {}
+    )
   ])
 }
 

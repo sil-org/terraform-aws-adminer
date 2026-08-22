@@ -104,3 +104,9 @@ variable "require_totp" {
   type        = bool
   default     = false
 }
+
+variable "cloudwatch_log_group_name" {
+  description = "Name of an existing CloudWatch log group to send Adminer container logs to. If empty, no log configuration is added to the container definition and logs are not collected."
+  type        = string
+  default     = ""
+}
