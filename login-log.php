@@ -21,18 +21,25 @@ class AdminerLoginLog extends Adminer\Plugin {
     $forwarded_for = preg_replace('~.*, *~', '', strval($_SERVER["HTTP_X_FORWARDED_FOR"]));
     $alb_seen_ip = $forwarded_for !== "" ? $forwarded_for : strval($_SERVER["REMOTE_ADDR"]);
 
-    // Cloudflare sets this from the actual TCP connection, so a client can't
-    // spoof it directly - but it's only trustworthy if alb_seen_ip is
-    // confirmed to be one of Cloudflare's published IP ranges
+    // Cloudflare sets these from the actual TCP connection/edge metadata, so
+    // a client can't spoof them directly - but they're only trustworthy if
+    // alb_seen_ip is confirmed to be one of Cloudflare's published IP ranges
     // (https://www.cloudflare.com/ips/), since otherwise the ALB was reached
-    // directly and this header could have been set by the client itself.
+    // directly and these headers could have been set by the client itself.
     $cf_connecting_ip = strval($_SERVER["HTTP_CF_CONNECTING_IP"]);
+    $cf_connecting_ipv6 = strval($_SERVER["HTTP_CF_CONNECTING_IPV6"]);
+    $cf_ray = strval($_SERVER["HTTP_CF_RAY"]);
+    $cf_ip_country = strval($_SERVER["HTTP_CF_IPCOUNTRY"]);
 
     error_log(json_encode([
       "event" => "adminer_login",
       "username" => $login,
       "alb_seen_ip" => $alb_seen_ip,
       "cf_connecting_ip" => $cf_connecting_ip,
+      "cf_connecting_ipv6" => $cf_connecting_ipv6,
+      "cf_ray" => $cf_ray,
+      "cf_ip_country" => $cf_ip_country,
+      "user_agent" => strval($_SERVER["HTTP_USER_AGENT"]),
     ]));
 
     return null;
