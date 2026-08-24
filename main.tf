@@ -45,47 +45,65 @@ resource "aws_alb_listener_rule" "adminer" {
   }
 }
 
+data "aws_region" "current" {}
+
 /*
  * Create ECS service
  */
 locals {
-  task_def = jsonencode([
-    {
-      cpu : var.cpu
-      memory : var.memory
-      image : (var.require_totp || var.adminer_ssl_config != "" ?
-        "ghcr.io/sil-org/terraform-aws-adminer:latest" :
-        "adminer:latest"
-      )
-      name : "adminer"
-      portMappings : [
-        {
-          "containerPort" : 8080
-        },
-      ]
-      environment : [
-        {
-          "name" : "ADMINER_DEFAULT_SERVER"
-          "value" : var.adminer_default_server
-        },
-        {
-          "name" : "ADMINER_DESIGN"
-          "value" : var.adminer_design
-        },
-        {
-          "name" : "ADMINER_OTP_SECRET"
-          "value" : var.require_totp ? random_bytes.totp_secret[0].base64 : ""
-        },
-        {
-          "name" : "ADMINER_PLUGINS"
-          "value" : var.adminer_plugins
-        },
-        {
-          "name" : "ADMINER_SSL_CONFIG"
-          "value" : var.adminer_ssl_config
-        },
-      ]
+  log_configuration = var.cloudwatch_log_group_name != "" ? {
+    logDriver : "awslogs"
+    options : {
+      "awslogs-group" : var.cloudwatch_log_group_name
+      "awslogs-region" : data.aws_region.current.name
+      "awslogs-stream-prefix" : "${var.app_name}-${var.app_env}"
     }
+  } : null
+
+  task_def = jsonencode([
+    merge(
+      {
+        cpu : var.cpu
+        memory : var.memory
+        image : (var.require_totp || var.adminer_ssl_config != "" || var.cloudwatch_log_group_name != "" ?
+          "ghcr.io/sil-org/terraform-aws-adminer:latest" :
+          "adminer:latest"
+        )
+        name : "adminer"
+        portMappings : [
+          {
+            "containerPort" : 8080
+          },
+        ]
+        environment : [
+          {
+            "name" : "ADMINER_DEFAULT_SERVER"
+            "value" : var.adminer_default_server
+          },
+          {
+            "name" : "ADMINER_DESIGN"
+            "value" : var.adminer_design
+          },
+          {
+            "name" : "ADMINER_LOGIN_LOG_ENABLED"
+            "value" : var.cloudwatch_log_group_name != "" ? "1" : ""
+          },
+          {
+            "name" : "ADMINER_OTP_SECRET"
+            "value" : var.require_totp ? random_bytes.totp_secret[0].base64 : ""
+          },
+          {
+            "name" : "ADMINER_PLUGINS"
+            "value" : var.adminer_plugins
+          },
+          {
+            "name" : "ADMINER_SSL_CONFIG"
+            "value" : var.adminer_ssl_config
+          },
+        ]
+      },
+      local.log_configuration != null ? { logConfiguration : local.log_configuration } : {}
+    )
   ])
 }
 
